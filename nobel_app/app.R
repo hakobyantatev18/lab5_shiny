@@ -27,8 +27,12 @@ ui <- fluidPage(
       selectInput("category", "Category", choices = categories),
       conditionalPanel(
         condition = "input.tabs == 'Laureates by year'",
-        sliderInput("year", "Year", min = min(years), max = max(years),
-                    value = max(years), sep = "", step = 1)
+        checkboxInput("use_year", "Filter by year", value = FALSE),
+        conditionalPanel(
+          condition = "input.use_year",
+          sliderInput("year", "Year", min = min(years), max = max(years),
+                      value = 2019, sep = "", step = 1)
+        )
       )
     ),
     mainPanel(
@@ -45,35 +49,26 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   
   laureates <- reactive({
-    get_laureates(
-      category = input$category,
-      year = input$year
-    )
+    year <- if (isTRUE(input$use_year)) input$year else NULL
+    get_laureates(category = input$category, year = year)
+  })
+  
+  laureates_all_years <- reactive({
+    get_laureates(category = input$category, year = NULL)
   })
   
   output$laureates <- renderTable({
-    
     res <- laureates()
-    
-    validate(
-      need(
-        nrow(res) > 0,
-        "No prize awarded for this category and year."
-      )
-    )
+    validate(need(nrow(res) > 0, "No laureates found for this selection."))
     res
   })
   
   output$age_plot <- renderPlot({
-    
-    res <- laureates()
-    plot_age_over_time(res)
+    plot_age_over_time(laureates_all_years())
   })
   
   output$map_of_countries <- renderPlot({
-    
-    res <- laureates()
-    plot_birth_countries(res)
+    plot_birth_countries(laureates_all_years())
   })
 }
 
