@@ -75,4 +75,6 @@ server <- function(input, output, session) {
 # Shiny app
 shinyApp(ui = ui, server = server)
 
-
+# shiny::runApp("nobel_app")
+# Sys.setenv(TAR = "/usr/bin/tar")
+# shiny::runGitHub("lab5_shiny", "hakobyantatev18", subdir = "nobel_app")
