@@ -26,7 +26,7 @@ ui <- fluidPage(
     sidebarPanel(
       selectInput("category", "Category", choices = categories),
       conditionalPanel(
-        condition = "input.tabs == 'Laureates by year'",
+        condition = "input.tabs == 'Laureates by category and year'",
         checkboxInput("use_year", "Filter by year", value = FALSE),
         conditionalPanel(
           condition = "input.use_year",
@@ -37,7 +37,7 @@ ui <- fluidPage(
     ),
     mainPanel(
       tabsetPanel(id = "tabs",
-                  tabPanel("Laureates by year", tableOutput("laureates")),
+                  tabPanel("Laureates by category and year", tableOutput("laureates")),
                   tabPanel("Age over time", plotOutput("age_plot")),
                   tabPanel("Map of the birth countries", plotOutput("map_of_countries")),
       )
